@@ -7,7 +7,7 @@ from PySide6.QtWidgets import ( QApplication,
                                 )
 from PySide6.QtCore import Qt,Signal,QSize,QObject, QEvent,QPoint
 from PySide6.QtGui import QFont,QPainter, QColor,QAction,QIcon
-from api import styleconfig
+import styleconfig
 from pathlib import Path
 
 
