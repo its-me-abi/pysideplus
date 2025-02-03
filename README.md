@@ -22,7 +22,7 @@ you can reuse this widget in your pyside code in two ways
 #### * by subclassing / creating instance
    
 ```
- from api.customtabwidget import TabPlusPlus
+ from customtabwidget import TabPlusPlus
 
  class modified_tab(TabPlusPlus):
     def _myTab__new_tab(self, event):
@@ -38,4 +38,5 @@ if __name__ == "__main__":
     widget.setTabsClosable(True)
     widget.addTab(QPushButton("button 1"),"tab 0")
     widget.show()
+
     sys.exit(app.exec())
