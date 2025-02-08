@@ -1,4 +1,4 @@
-# pysidetab
+# pysideplus
 ```
 pyside6 QTabwidget with more features and beautifull look.
 this repo contain reusable beautifull pyside6 Qtabwidget.
