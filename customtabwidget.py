@@ -7,11 +7,15 @@ from PySide6.QtWidgets import ( QApplication,
                                 )
 from PySide6.QtCore import Qt,Signal,QSize,QObject, QEvent,QPoint
 from PySide6.QtGui import QFont,QPainter, QColor,QAction,QIcon
+from PySide6 import QtGui
+from PySide6 import QtCore
+
 import styleconfig
+from qmenu import CustomQmenu
 from pathlib import Path
 
 
-__author__ = "github.com/its-me-abilash"
+__author__ = "github.com/its-me-abi"
 __version__ = "1.0.2"
 __date__ = "2/2/2025"
 __about__ = """
@@ -27,7 +31,7 @@ def  getpath(filename):
     return posixpath
 
 class ResizeEventFilter(QObject):
-    "this object is used for resize event deetction and callback"
+    "this object is used for resize event detction and callback"
     def __init__(self, callback):
         super().__init__()
         self.callback = callback  # Function to call on resizeEvent
@@ -37,7 +41,6 @@ class ResizeEventFilter(QObject):
         if event.type() == QEvent.Resize:
             self.callback(obj)
         return val
-
 
 class myTab (QTabWidget):
     """
@@ -147,7 +150,7 @@ class myTab (QTabWidget):
         self.setStyleSheet(style_sheet)
 
     def __new_tab (self, event):
-        raise NotImplementedError("override __new_tab method")
+        raise NotImplementedError("override _myTab__new_tab method to avoid this error ")
 
     def __detectresize (self, event):
         "when tab bar removed or inserted or size changed dynamicaly then we should resize cornerwidgets. "
@@ -201,26 +204,9 @@ class with_tab_history (myTab):
         self.setCurrentWidget(new_tab)
         raise NotImplementedError(self.msg)
 
-    def __get_history_style(self):
-        return    """
-                   QMenu {
-                       border: 2px solid #D1D5DB;
-                       border-radius: 5px;        
-                       background-color: white;   
-                   }
-                   QMenu::item {
-                       padding: 5px 20px;        
-                   }
-                   QMenu::item:selected {
-                       background-color: #0078d7;   
-                       color: white; 
-                   }
-                   """
     def _myTab__show_tabhistory_menu(self, button=None):
         "its not exactly a context menu. its a tab history menu."
-        context_menu = QMenu(self)
-        context_menu.setStyleSheet(self.__get_history_style())
-
+        context_menu = CustomQmenu(self)
         for tabindex,text in self.__get_tab():
             action = QAction(text,self)
             action.triggered.connect(lambda placeholder=True, tabindex_number=tabindex:self.__switch_to_tab(tabindex_number))
@@ -239,45 +225,20 @@ class with_tab_history (myTab):
 
 
 class WithContextMenu(with_tab_history):
-
-    class __style:
-        Qmenuborder_color = styleconfig.Qmenu.border_color
-        Qmenu_selection_color =  styleconfig.Qmenu.selection_color
-
     def __init__(self, parent=None,*args,**kargs):
         super().__init__(parent,*args,**kargs)
         self.tabBar().setContextMenuPolicy(Qt.CustomContextMenu)
         self.tabBar().customContextMenuRequested.connect(self.show_context_menu)
 
-    def __get_qmenu_style(self):
-        return f"""
-                    QMenu {{
-                        background-color: #ffffff;
-                        border: 1px solid {self.__style.Qmenuborder_color};
-                        border-radius: 10px; 
-                        padding: 5px;
-                        }}
-                    QMenu::item {{
-                        padding: 5px 15px;
-                        border-radius: 5px;  
-                        }}
-                    QMenu::item:selected {{
-                        background-color: {self.__style.Qmenu_selection_color};  
-                        color: white;  
-                        }}
-                """
-
     def show_context_menu(self, pos):
         index = self.tabBar().tabAt(pos)
         if index == -1:
             return  # No tab at this position
-        context_menu = QMenu()
-        context_menu.setStyleSheet(self.__get_qmenu_style())
+        context_menu = CustomQmenu()
         close_action = QAction(QIcon(getpath("close.png")), "close tab", self)
         close_action.triggered.connect(lambda: self._myTab__close_tab(index))
         context_menu.addAction(close_action)
         context_menu.exec(self.tabBar().mapToGlobal(pos))
-
 
 TabPlusPlus = WithContextMenu
 
