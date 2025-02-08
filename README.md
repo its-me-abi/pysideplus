@@ -1,7 +1,7 @@
 # pysideplus
 ```
-pyside6 QTabwidget with more features and beautifull look.
-this repo contain reusable beautifull pyside6 Qtabwidget.
+
+this repo contain reusable beautifull pyside6 widgets.
 you can use it instead QTabWidget of pyside6 because all original methods and attributes are available in this class
 you can make subclass and use it as you  like. it provides beautifull tab with  new tab button and tab history menu
 ```
