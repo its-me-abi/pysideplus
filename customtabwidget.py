@@ -42,6 +42,35 @@ class ResizeEventFilter(QObject):
             self.callback(obj)
         return val
 
+class corner_widget(QWidget):
+    "provides few widgets for controlling tab widget"
+    def __init__(self,*args, **kargs):
+        super().__init__(*args, **kargs)
+        self.font = QFont("Arial", 15)
+        self.font.setWeight(QFont.Bold)
+        self.button = QPushButton("+")
+        self.button.setObjectName("newbutton")
+        self.button.setFont(self.font)
+
+        self.drop = QPushButton("☰")
+        self.drop.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.drop.setObjectName("menubutton")
+
+        self.hbox = QHBoxLayout(self)
+        self.hbox.setContentsMargins(1, 0, 1, 0)
+        self.hbox.setSpacing(1)
+
+        self.hbox.addWidget(self.button)
+        self.hbox.addWidget(self.drop)
+        self.setLayout(self.hbox)
+        self.setObjectName("corner_widget")
+
+    def set_newtab_callbacks(self,callbac):
+        self.button.clicked.connect(callbac)
+
+    def set_tabhistory_callbacks(self,callbac):
+        self.drop.clicked.connect(lambda point=0: callbac(self.drop))
+
 class myTab (QTabWidget):
     """
     it provides some features to tabwidget
@@ -64,8 +93,11 @@ class myTab (QTabWidget):
         super().__init__(parent,*args,**kargs)
         self.tabBar().setObjectName("mytabbar")
         if show_corner_widget:
-              self.__corner_widget = self.__create_corner_widget()
+              self.__corner_widget = corner_widget()
+              self.__corner_widget.set_newtab_callbacks(self.__new_tab)
+              self.__corner_widget.set_tabhistory_callbacks(self.__show_tabhistory_menu)
               self.setCornerWidget(self.__corner_widget, Qt.TopRightCorner)
+
         self.__set_tab_style()
         self.__eventfilter = ResizeEventFilter(self.__detectresize)
 
@@ -156,32 +188,6 @@ class myTab (QTabWidget):
         "when tab bar removed or inserted or size changed dynamicaly then we should resize cornerwidgets. "
         self.__set_tab_style()
 
-    def __create_corner_widget (self):
-        font = QFont("Arial", 15)
-        font.setWeight(QFont.Bold)
-        button = QPushButton("+")
-        button.setObjectName("newbutton")
-        button.clicked.connect(self.__new_tab)
-        button.setFont(font)
-
-        drop = QPushButton("☰")
-        drop.setContextMenuPolicy(Qt.CustomContextMenu)
-        drop.clicked.connect(lambda point=0,button=drop:self.__show_tabhistory_menu(button))
-        drop.setObjectName("menubutton")
-
-        corner_widget = QWidget()
-        corner_widget.setObjectName("corner_widget")
-
-        hbox =  QHBoxLayout(corner_widget)
-        hbox.setContentsMargins(1, 0, 1, 0)
-        hbox.setSpacing(1)
-
-        hbox.addWidget( button )
-        hbox.addWidget( drop )
-
-        corner_widget.setLayout(hbox)
-        return corner_widget
-
     def __close_tab(self, index):
         if self.count()>1:
             self.removeTab(index)
@@ -193,7 +199,7 @@ class myTab (QTabWidget):
 
 class with_tab_history (myTab):
     "this class provides  tabs history menu for quick tab selection "
-    "it also provides button for  adding new tab "
+    "it provides button for  adding new tab "
 
     msg = " please override \"_myTab__new_tab\" method of this class to add your own widget when cliking on + icon"
 
