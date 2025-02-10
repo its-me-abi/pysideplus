@@ -10,7 +10,7 @@ for example TabPlusPlus (modified qtabwidget)
 ### pyside6 normal Qtabwidget
 ![image](https://github.com/user-attachments/assets/d3fe41fa-da66-47e2-8df0-c7a688623a81)
 ### pysideplus  TabPlusPlus widget (modified Qtabwidget)
-![image](https://github.com/user-attachments/assets/4d6a8c0e-5066-4c88-b6fa-007592d90899)
+![image](https://github.com/user-attachments/assets/e0e72c1f-f5c9-4352-8675-cc9b793f720a)
 
 ## usage
 you can reuse these custom widgets in your pyside code in two ways
