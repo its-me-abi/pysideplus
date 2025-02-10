@@ -55,6 +55,6 @@ if __name__ == "__main__":
         close_action.triggered.connect(lambda y,selected=x:( print("it's working, selected" ,selected),sys.exit()))
         all.append(close_action)
         context_menu.addAction(close_action)
-    context_menu.exec(QPoint(300,300))
+    context_menu.exec(QtCore.QPoint(300,300))
 
     sys.exit()
