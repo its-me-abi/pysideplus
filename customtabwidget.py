@@ -98,9 +98,6 @@ class myTab (QTabWidget):
         self.tabBar().installEventFilter(self.__eventfilter)
         self.tabCloseRequested.connect(self.__close_tab)
 
-    def get_corner_widget(self):
-        return self.__corner_widget
-
     def __get_tab_style(self):
         style_sheet = f"""
 
@@ -247,7 +244,7 @@ class with_search_option (WithContextMenu):
     "provides a search bar in conrner widget of tab "
     def __init__(self, *args,**kargs):
         super().__init__(*args,**kargs)
-        wid = self.get_corner_widget()
+        wid = self.cornerWidget()
         self.__searchbox = search_bar()
         wid.hbox.insertWidget(0, self.__searchbox)
         self.__searchbox.connect_search_box(self.__on_text_changed)
