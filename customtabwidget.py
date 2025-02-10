@@ -106,6 +106,7 @@ class myTab (QTabWidget):
 
         {self.objectName()}::pane {{
                border: 1px solid {self.__style.border_color};
+               background-color: white;
             }}
         
         #{self.tabBar().objectName()}::tab{{
@@ -178,7 +179,7 @@ class myTab (QTabWidget):
         self.setStyleSheet(style_sheet)
 
     def __new_tab (self, event):
-        raise NotImplementedError("override _myTab__new_tab method to avoid this error ")
+        print("override _myTab__new_tab method to avoid this error ")
 
     def __detectresize (self, event):
         "when tab bar removed or inserted or size changed dynamicaly then we should resize cornerwidgets. "
@@ -190,7 +191,7 @@ class myTab (QTabWidget):
 
     def __show_tabhistory_menu(self, button=None):
         error = "quick tab history menu is not implemented"
-        raise NotImplementedError(error)
+        print( error )
 
 
 class with_tab_history (myTab):
@@ -204,7 +205,7 @@ class with_tab_history (myTab):
         new_tab = QPushButton(self.msg)
         self.addTab(new_tab,f"untitled {self.count()}")
         self.setCurrentWidget(new_tab)
-        raise NotImplementedError(self.msg)
+        print(self.msg)
 
     def _myTab__show_tabhistory_menu(self, button=None):
         "its not exactly a context menu. its a tab history menu."
@@ -230,9 +231,9 @@ class WithContextMenu(with_tab_history):
     def __init__(self, parent=None,*args,**kargs):
         super().__init__(parent,*args,**kargs)
         self.tabBar().setContextMenuPolicy(Qt.CustomContextMenu)
-        self.tabBar().customContextMenuRequested.connect(self.show_context_menu)
+        self.tabBar().customContextMenuRequested.connect(self.__show_context_menu)
 
-    def show_context_menu(self, pos):
+    def __show_context_menu(self, pos):
         index = self.tabBar().tabAt(pos)
         if index == -1:
             return  # No tab at this position
@@ -247,14 +248,14 @@ class with_search_option (WithContextMenu):
     def __init__(self, *args,**kargs):
         super().__init__(*args,**kargs)
         wid = self.get_corner_widget()
-        self.searchbox = search_bar()
-        wid.hbox.insertWidget(0, self.searchbox)
-        self.searchbox.connect_search_box(self.on_text_changed)
-        self.searchbox.setFocus()
+        self.__searchbox = search_bar()
+        wid.hbox.insertWidget(0, self.__searchbox)
+        self.__searchbox.connect_search_box(self.__on_text_changed)
+        self.__searchbox.setFocus()
 
     def _myTab__detectresize(self,evnt):
         super()._myTab__detectresize(evnt)
-        self.searchbox.setStyleSheet(f"""
+        self.__searchbox.setStyleSheet(f"""
                 #search_box {{ 
                         border:1px solid {styleconfig.QtabWidget.border_color};
                         height:{self.tabBar().size().height()}px;
@@ -273,7 +274,7 @@ class with_search_option (WithContextMenu):
                        background-color: {styleconfig.QtabWidget.tabbarbg};
                        }}
                 """)
-    def find_matched_tabs (self,text):
+    def __find_matched_tabs (self, text):
         matchd = []
         unmatched = []
         for one_tab in range(self.count()):
@@ -284,9 +285,9 @@ class with_search_option (WithContextMenu):
                 unmatched.append (one_tab)
         return matchd , unmatched
 
-    def on_text_changed (self,text=""):
+    def __on_text_changed (self, text=""):
             "search for pattern in tabtext and hides non matched tabs.shows only matched "
-            matched,unmatched = self.find_matched_tabs(text)
+            matched,unmatched = self.__find_matched_tabs(text)
             for one_tab in matched:
                 self.setTabVisible(one_tab, True)
             for one_tab in unmatched:
@@ -323,14 +324,14 @@ class search_bar (QWidget):
 TabPlusPlus = with_search_option # WithContextMenu
 
 if __name__ == "__main__":
-    print ( "test running" )
+    print ( "Qtabwidget test running.." )
     from PySide6.QtWidgets import QApplication, QMainWindow
     import sys
     
     app = QApplication(sys.argv)
     widget = TabPlusPlus(show_corner_widget=True)
     widget.setTabsClosable(True)
-    widget.addTab(QPushButton("button"),"tab 0")
+    widget.addTab(QPushButton("test button"),"tab 0")
     widget.show()
     sys.exit(app.exec())
 
