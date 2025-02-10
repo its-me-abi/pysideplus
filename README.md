@@ -2,8 +2,7 @@
 ```
 
 this repo contain reusable beautifull pyside6 widgets.
-you can use it instead  of pyside6 widgets because all original methods and attributes are available
-in this class .you can make subclass and use it as you  like.
+you can use it instead  of pyside6 widgets .you can make subclass and use it as you  like.
 for example TabPlusPlus (modified qtabwidget)
    it provides beautifull tab with  new tab button and tab history menu and tab search bar
 ```
