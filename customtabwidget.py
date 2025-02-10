@@ -1,27 +1,20 @@
 
-from PySide6.QtWidgets import ( QApplication,
-                               QTabWidget, QWidget, QPushButton,
-                               QTabBar,QSizePolicy,QLabel,QHBoxLayout,
-                               QVBoxLayout,QMenu,QSpacerItem , QMessageBox,
-                               QGraphicsDropShadowEffect
-                                )
-from PySide6.QtCore import Qt,Signal,QSize,QObject, QEvent,QPoint
-from PySide6.QtGui import QFont,QPainter, QColor,QAction,QIcon
-from PySide6 import QtGui
-from PySide6 import QtCore
+from PySide6.QtWidgets import ( QTabWidget, QWidget, QPushButton,QHBoxLayout, QLineEdit)
+from PySide6.QtCore import Qt,QObject, QEvent
+from PySide6.QtGui import QFont,QAction,QIcon
 
 import styleconfig
 from qmenu import CustomQmenu
 from pathlib import Path
-
+import re
 
 __author__ = "github.com/its-me-abi"
-__version__ = "1.0.2"
-__date__ = "2/2/2025"
+__version__ = "1.0.3"
+__date__ = "10/2/2025"
 __about__ = """
-               customized pyside6 QTabWidget with 'add new tab' and 'tab history ' and few more  features.
-               it also has grey/red tab closebutton with hidden tear . this is built for using inside a closed source software
-               but iam releasing this code as opensource.
+               A customized PySide6 QTabWidget with an 'Add New Tab' button, 'Tab History,' and a 'Tab Search Box.'
+                It also features a grey/red tab close button with a hidden tear effect. 
+               This was built for use inside a closed-source software, but I am releasing the code as open-source.
             """
 
 def  getpath(filename):
@@ -77,6 +70,7 @@ class myTab (QTabWidget):
     for example a corner widget like  new tab option of firefox
     it will automaticaly resize according to tab height.
     """
+
     class __style:
         bg = styleconfig.QtabWidget.bg
         border_color = styleconfig.QtabWidget.border_color
@@ -92,8 +86,8 @@ class myTab (QTabWidget):
     def __init__(self, parent=None,*args,show_corner_widget=True,**kargs):
         super().__init__(parent,*args,**kargs)
         self.tabBar().setObjectName("mytabbar")
+        self.__corner_widget = corner_widget()
         if show_corner_widget:
-              self.__corner_widget = corner_widget()
               self.__corner_widget.set_newtab_callbacks(self.__new_tab)
               self.__corner_widget.set_tabhistory_callbacks(self.__show_tabhistory_menu)
               self.setCornerWidget(self.__corner_widget, Qt.TopRightCorner)
@@ -103,6 +97,9 @@ class myTab (QTabWidget):
 
         self.tabBar().installEventFilter(self.__eventfilter)
         self.tabCloseRequested.connect(self.__close_tab)
+
+    def get_corner_widget(self):
+        return self.__corner_widget
 
     def __get_tab_style(self):
         style_sheet = f"""
@@ -163,7 +160,6 @@ class myTab (QTabWidget):
         #{self.tabBar().objectName()}::tear{{
                 image: none;
             }}
-
 
         #{self.tabBar().objectName()} QToolButton {{
                 border:1px solid {self.__style.border_color};
@@ -246,7 +242,85 @@ class WithContextMenu(with_tab_history):
         context_menu.addAction(close_action)
         context_menu.exec(self.tabBar().mapToGlobal(pos))
 
-TabPlusPlus = WithContextMenu
+class with_search_option (WithContextMenu):
+    "provides a search bar in conrner widget of tab "
+    def __init__(self, *args,**kargs):
+        super().__init__(*args,**kargs)
+        wid = self.get_corner_widget()
+        self.searchbox = search_bar()
+        wid.hbox.insertWidget(0, self.searchbox)
+        self.searchbox.connect_search_box(self.on_text_changed)
+        self.searchbox.setFocus()
+
+    def _myTab__detectresize(self,evnt):
+        super()._myTab__detectresize(evnt)
+        self.searchbox.setStyleSheet(f"""
+                #search_box {{ 
+                        border:1px solid {styleconfig.QtabWidget.border_color};
+                        height:{self.tabBar().size().height()}px;
+                        width:120px;
+                        background-color: white;
+                        
+                    }}
+                #search_bar {{ 
+                        border:1px solid {styleconfig.QtabWidget.border_color};
+                        height:{self.tabBar().size().height()}px;
+                        width:120px;
+                        background-color: white;
+                    }}
+                
+                #search_box:hover {{
+                       background-color: {styleconfig.QtabWidget.tabbarbg};
+                       }}
+                """)
+    def find_matched_tabs (self,text):
+        matchd = []
+        unmatched = []
+        for one_tab in range(self.count()):
+            data = self.tabText(one_tab)
+            if re.search(text , data):
+                matchd.append(one_tab)
+            else:
+                unmatched.append (one_tab)
+        return matchd , unmatched
+
+    def on_text_changed (self,text=""):
+            "search for pattern in tabtext and hides non matched tabs.shows only matched "
+            matched,unmatched = self.find_matched_tabs(text)
+            for one_tab in matched:
+                self.setTabVisible(one_tab, True)
+            for one_tab in unmatched:
+                if one_tab == 0 :
+                    if len(matched) > 0 :
+                        self.setTabVisible(one_tab, False)
+                    else:
+                        self.setTabVisible(one_tab, True)
+                else:
+                    self.setTabVisible(one_tab, False)
+
+class search_bar (QWidget):
+
+    def connect_search_box(self,callback):
+        self.txt.textChanged.connect(callback)
+
+    def __init__(self,parent=None):
+        super().__init__()
+        self.setObjectName("search_bar")
+        self.ico = QIcon(getpath("find.png"))
+        self.txt = QLineEdit()
+        self.txt.addAction(self.ico,QLineEdit.TrailingPosition)
+        self.txt.setPlaceholderText(" search.. ")
+        self.txt.setObjectName("search_box")
+
+        self.hbox = QHBoxLayout()
+        self.hbox.addWidget(self.txt)
+
+        self.hbox.setContentsMargins(1, 0, 1, 0)
+        self.hbox.setSpacing(1)
+        self.setLayout(self.hbox)
+
+
+TabPlusPlus = with_search_option # WithContextMenu
 
 if __name__ == "__main__":
     print ( "test running" )
