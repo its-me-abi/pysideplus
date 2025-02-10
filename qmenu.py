@@ -1,14 +1,9 @@
-from PySide6.QtWidgets import ( QApplication,
-                               QTabWidget, QWidget, QPushButton,
-                               QTabBar,QSizePolicy,QLabel,QHBoxLayout,
-                               QVBoxLayout,QMenu,QSpacerItem , QMessageBox,
-                               QGraphicsDropShadowEffect
-                                )
-from PySide6.QtCore import Qt,Signal,QSize,QObject, QEvent,QPoint
-from PySide6.QtGui import QFont,QPainter, QColor,QAction,QIcon
+from PySide6.QtWidgets import  QMenu
+from PySide6.QtCore import QPoint
 from PySide6 import QtGui
 from PySide6 import QtCore
 import styleconfig
+
 
 class CustomQmenu(QMenu):
     """
@@ -45,3 +40,22 @@ class CustomQmenu(QMenu):
         region = QtGui.QRegion(path.toFillPolygon(QtGui.QTransform()).toPolygon())
         self.setMask(region)
         super().resizeEvent(event)
+
+
+if __name__ == "__main__":
+    print("Qmenu test running..")
+    from PySide6.QtWidgets import QApplication, QMainWindow
+    from PySide6.QtGui import QFont, QAction, QIcon
+    import sys
+
+    app = QApplication(sys.argv)
+    context_menu = CustomQmenu()
+    all = []
+    for x in range(1,10):
+        close_action = QAction(f"test {x}")
+        close_action.triggered.connect(lambda y,selected=x:( print("it's working, selected" ,selected),sys.exit()))
+        all.append(close_action)
+        context_menu.addAction(close_action)
+    context_menu.exec(QPoint(300,300))
+
+    sys.exit()
