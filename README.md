@@ -13,7 +13,7 @@ for example TabPlusPlus (modified qtabwidget)
 ![image](https://github.com/user-attachments/assets/4d6a8c0e-5066-4c88-b6fa-007592d90899)
 
 ## usage
-you can reuse this widget in your pyside code in two ways
+you can reuse these custom widgets in your pyside code in two ways
 
 #### * qt creator promote option
    
