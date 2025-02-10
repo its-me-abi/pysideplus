@@ -1,5 +1,4 @@
 from PySide6.QtWidgets import  QMenu
-from PySide6.QtCore import QPoint
 from PySide6 import QtGui
 from PySide6 import QtCore
 import styleconfig
@@ -44,8 +43,8 @@ class CustomQmenu(QMenu):
 
 if __name__ == "__main__":
     print("Qmenu test running..")
-    from PySide6.QtWidgets import QApplication, QMainWindow
-    from PySide6.QtGui import QFont, QAction, QIcon
+    from PySide6.QtWidgets import QApplication
+    from PySide6.QtGui import  QAction
     import sys
 
     app = QApplication(sys.argv)
