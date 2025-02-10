@@ -49,11 +49,9 @@ if __name__ == "__main__":
 
     app = QApplication(sys.argv)
     context_menu = CustomQmenu()
-    all = []
     for x in range(1,10):
-        close_action = QAction(f"test {x}")
+        close_action = QAction(f"testing.. please select {x}",context_menu)
         close_action.triggered.connect(lambda y,selected=x:( print("it's working, selected" ,selected),sys.exit()))
-        all.append(close_action)
         context_menu.addAction(close_action)
     context_menu.exec(QtCore.QPoint(300,300))
 
