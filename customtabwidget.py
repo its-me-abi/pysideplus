@@ -5,6 +5,7 @@ from PySide6.QtGui import QFont,QAction,QIcon
 
 import styleconfig
 from qmenu import CustomQmenu
+from scrollable_qmenu import ScrollableMenu
 from pathlib import Path
 import re
 
@@ -166,7 +167,6 @@ class myTab (QTabWidget):
 
         #{self.tabBar().objectName()}::scroller {{
                 width:{self.__style.scrollbutton_width};
-
             }}
         """
         return style_sheet
@@ -206,13 +206,13 @@ class with_tab_history (myTab):
 
     def _myTab__show_tabhistory_menu(self, button=None):
         "its not exactly a context menu. its a tab history menu."
-        context_menu = CustomQmenu(self)
+        context_menu = ScrollableMenu(self)
         for tabindex,text in self.__get_tab():
             action = QAction(text,self)
             action.triggered.connect(lambda placeholder=True, tabindex_number=tabindex:self.__switch_to_tab(tabindex_number))
             context_menu.addAction(action)
         pos = button.rect().bottomRight()
-        context_menu.exec(button.mapToGlobal(pos))
+        context_menu.showat(button.mapToGlobal(pos))
 
     def __get_tab(self):
         "returns tab index and text"
@@ -258,8 +258,8 @@ class with_search_option (WithContextMenu):
                         height:{self.tabBar().size().height()}px;
                         width:120px;
                         background-color: white;
-                        
                     }}
+                    
                 #search_bar {{ 
                         border:1px solid {styleconfig.QtabWidget.border_color};
                         height:{self.tabBar().size().height()}px;
@@ -316,7 +316,6 @@ class search_bar (QWidget):
         self.hbox.setContentsMargins(1, 0, 1, 0)
         self.hbox.setSpacing(1)
         self.setLayout(self.hbox)
-
 
 TabPlusPlus = with_search_option # WithContextMenu
 
