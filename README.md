@@ -40,3 +40,26 @@ if __name__ == "__main__":
     widget.show()
 
     sys.exit(app.exec())
+```
+
+
+## Webview usage
+
+
+```
+   from pysideplus import webview2.webview as webview
+   import sys
+   from PySide6.QtWidgets import QApplication
+   from PySide6.QtCore import QUrl
+
+   class mywebview ( webview.Webview ):
+        def on_http_connection (self, flow ) :
+            print ( "connection received " )
+
+   if __name__ == "__main__":
+       app = QApplication(sys.argv)
+       window = mywebview()
+       window.setUrl(QUrl("https://www.python.org"))
+       window.show()
+       sys.exit(app.exec())
+```
