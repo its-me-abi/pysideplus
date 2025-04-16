@@ -44,8 +44,10 @@ if __name__ == "__main__":
 
 
 ## Webview usage
-Webview provides http connection monitering ability. that is not available in original webview of pyside6
-originalwebview can only read request headers not body but this wqebview can aacess full request and responce
+
+> Webview provides http connection monitering ability. that is not available in original webview of pyside6.
+> 
+> originalwebview can only read request headers not body but this wqebview can aacess full request and responce
 
 ```
    from pysideplus import webview2.webview as webview
